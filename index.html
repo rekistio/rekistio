@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FileReady V2 — Smart Photo Requirement Checker & Resizer</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f7fb;color:#172033;font-family:system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif}
+header{background:#fff;border-bottom:1px solid #e5e7eb;padding:18px}
+.wrap{max-width:960px;margin:auto}
+.brand{font-size:22px;font-weight:800}.tag{font-size:13px;color:#667085;margin-top:3px}
+main{padding:28px 14px}
+.hero h1{font-size:32px;margin:0 0 8px}.hero p{color:#667085;line-height:1.5;margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.card{background:#fff;border:1px solid #e4e7ec;border-radius:16px;padding:20px}
+.full{grid-column:1/-1}
+h2{font-size:18px;margin:0 0 16px}
+label{font-size:13px;font-weight:700;display:block;margin-bottom:6px;color:#344054}
+input,select,button{width:100%;min-height:42px;border-radius:10px;font:inherit}
+input,select{border:1px solid #d0d5dd;padding:9px 12px;background:#fff;color:#172033}
+input:focus,select:focus{border-color:#172033;outline:none}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:14px}
+.drop{border:2px dashed #cbd5e1;border-radius:14px;padding:26px;text-align:center;cursor:pointer;background:#fafbfc;transition:background .2s}
+.drop:hover{background:#f0f4fe}.drop strong{display:block;margin-bottom:4px;color:#172033}
+.drop span{font-size:13px;color:#667085}#fileInput{display:none}
+button{border:0;background:#172033;color:#fff;font-weight:700;padding:10px 15px;cursor:pointer;border-radius:10px}
+button:hover{background:#2a364f}
+button:disabled{opacity:.5;cursor:not-allowed}
+.preset-bar{background:#f8fafc;border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin-bottom:16px}
+.detected-card{margin-top:14px;background:#f0f7ff;border:1px solid #bbe3fe;border-radius:12px;padding:12px 14px;display:none}
+.detected-title{font-size:12px;font-weight:800;color:#026aa7;text-transform:uppercase;letter-spacing:.5px}
+.detected-info{font-size:14px;font-weight:700;color:#094067;margin-top:4px}
+.report{display:none}.summary{padding:14px;border-radius:12px;margin-bottom:14px;font-weight:800}
+.pass{background:#ecfdf3;color:#067647;border:1px solid #abefc6}.fail{background:#fef3f2;color:#b42318;border:1px solid #fecdca}
+.check{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eef0f3}
+.title{font-weight:700}.detail,.note{font-size:13px;color:#667085;margin-top:3px}
+.badge{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.ok{background:#ecfdf3;color:#067647}.bad{background:#fef3f2;color:#b42318}
+.preview{display:block;max-width:220px;max-height:260px;margin:12px auto 18px;border:1px solid #e4e7ec;border-radius:10px;object-fit:contain}
+.error{color:#b42318;font-size:13px;margin-top:10px;font-weight:600}.download{margin-top:18px}
+footer{font-size:12px;color:#667085;text-align:center;padding:24px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.fields{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">FileReady V2</div><div class="tag">Smart Requirement Checker &amp; Auto-Resizer</div></div></header>
+
+<main class="wrap">
+<section class="hero">
+<h1>Photo Requirement Checker</h1>
+<p>Check photos against portal specs, inspect details instantly, and auto-correct specs locally in browser.</p>
+</section>
+
+<div class="grid">
+<!-- 1. Upload & Immediate Auto-Detection -->
+<section class="card">
+<h2>1. Upload photo</h2>
+<label class="drop" for="fileInput">
+<strong>Choose an image</strong>
+<span>JPG, PNG or WebP</span>
+</label>
+<input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp">
+
+<!-- Feature 1: Automatic Detection Box -->
+<div id="detectedCard" class="detected-card">
+  <div class="detected-title">Original File Detected</div>
+  <div id="detectedInfo" class="detected-info">—</div>
+</div>
+
+<div id="fileName" class="note" style="margin-top:10px">No file selected.</div>
+<div id="error" class="error"></div>
+</section>
+
+<!-- 2. Requirements & Presets -->
+<section class="card">
+<h2>2. Select Preset or Set Specs</h2>
+
+<!-- Feature 5: Preset Selector -->
+<div class="preset-bar">
+  <label for="presetSelect">Preset Requirements</label>
+  <select id="presetSelect">
+    <option value="custom">Custom Specs</option>
+    <option value="passport">Passport Photo (600×600 px, max 200 KB, JPG)</option>
+    <option value="visa">Visa Photo (2×2 inch / 600×600 px, max 300 KB, JPG)</option>
+    <option value="exam">Exam Application (200×230 px, 20–50 KB, JPG)</option>
+    <option value="gov">Gov Form Photo (350×450 px, max 100 KB, JPG)</option>
+    <option value="signature">Signature Upload (300×80 px, 10–20 KB, JPG)</option>
+  </select>
+</div>
+
+<!-- Feature 2: Requirements Input -->
+<div class="fields">
+  <div class="field"><label for="width">Required Width (px)</label><input id="width" type="number" min="1" placeholder="e.g. 600"></div>
+  <div class="field"><label for="height">Required Height (px)</label><input id="height" type="number" min="1" placeholder="e.g. 600"></div>
+</div>
+
+<!-- Feature 3: Resizing Modes -->
+<div class="field">
+  <label for="resizeMode">Resizing Mode</label>
+  <select id="resizeMode">
+    <option value="crop">Crop to Exact Dimensions (Center Cover)</option>
+    <option value="maintain">Maintain Aspect Ratio (Fit Inside Target Box)</option>
+    <option value="stretch">Exact Stretch (Force Width & Height)</option>
+  </select>
+</div>
+
+<div class="fields">
+  <div class="field"><label for="maxKB">Maximum Size (KB)</label><input id="maxKB" type="number" min="1" placeholder="e.g. 200"></div>
+  <div class="field"><label for="minKB">Minimum Size (KB)</label><input id="minKB" type="number" min="0" placeholder="optional"></div>
+</div>
+
+<div class="field">
+  <label for="format">Required Format</label>
+  <select id="format">
+    <option value="image/jpeg">JPG / JPEG</option>
+    <option value="image/png">PNG</option>
+    <option value="image/webp">WebP</option>
+  </select>
+</div>
+
+<button id="checkBtn">Check Photo</button>
+</section>
+
+<!-- 3. Report & Smart Resizer -->
+<section id="report" class="card full">
+<h2>3. Compliance Report</h2>
+<img id="preview" class="preview" alt="Photo preview">
+<div id="summary"></div>
+<div id="checks"></div>
+
+<!-- Feature 4: Smart Compression & Resizing -->
+<div id="fixArea" class="download" style="display:none">
+<h2>Fix &amp; Optimize Photo</h2>
+<button id="fixBtn">Auto-Fix &amp; Compress Photo</button>
+<div id="fixStatus" class="note"></div>
+</div>
+
+<div id="downloadArea" class="download" style="display:none">
+<button id="downloadBtn">Download Corrected Photo</button>
+</div>
+</section>
+</div>
+</main>
+
+<footer>FileReady V2 · Local Browser Processing</footer>
+
+<script>
+let selectedFile = null;
+let fileBufferPromise = null;
+let detectedDimensions = null;
+let thumbnailDataURL = null;
+let correctedBlob = null;
+let correctedName = "fileready-corrected.jpg";
+
+const $ = id => document.getElementById(id);
+
+// Feature 5: Preset Presets Map
+const PRESETS = {
+  custom: { width: "", height: "", minKB: "", maxKB: "", format: "image/jpeg", mode: "crop" },
+  passport: { width: 600, height: 600, minKB: "", maxKB: 200, format: "image/jpeg", mode: "crop" },
+  visa: { width: 600, height: 600, minKB: "", maxKB: 300, format: "image/jpeg", mode: "crop" },
+  exam: { width: 200, height: 230, minKB: 20, maxKB: 50, format: "image/jpeg", mode: "crop" },
+  gov: { width: 350, height: 450, minKB: "", maxKB: 100, format: "image/jpeg", mode: "crop" },
+  signature: { width: 300, height: 80, minKB: 10, maxKB: 20, format: "image/jpeg", mode: "maintain" }
+};
+
+$("presetSelect").addEventListener("change", e => {
+  const p = PRESETS[e.target.value];
+  if (!p) return;
+  $("width").value = p.width;
+  $("height").value = p.height;
+  $("minKB").value = p.minKB;
+  $("maxKB").value = p.maxKB;
+  $("format").value = p.format;
+  $("resizeMode").value = p.mode;
+});
+
+// Immediate File Selection & Feature 1: Automatic Detection
+$("fileInput").addEventListener("change", async e => {
+  const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+  selectedFile = file;
+  $("error").textContent = "";
+  $("report").style.display = "none";
+  $("detectedCard").style.display = "none";
+  correctedBlob = null;
+  thumbnailDataURL = null;
+  detectedDimensions = null;
+
+  if (file) {
+    $("fileName").textContent = file.name;
+    
+    // Read ArrayBuffer instantly to defeat Android memory timeouts
+    fileBufferPromise = new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = ev => resolve(ev.target.result);
+      reader.onerror = () => reject(new Error("Permission to read file was denied by browser."));
+      reader.readAsArrayBuffer(file);
+    });
+
+    try {
+      const img = await getImageElement();
+      detectedDimensions = {
+        width: img.width || img.naturalWidth,
+        height: img.height || img.naturalHeight,
+        sizeKB: file.size / 1024,
+        type: file.type
+      };
+      
+      $("detectedInfo").textContent = 
+        detectedDimensions.width + " × " + detectedDimensions.height + " px · " +
+        formatBytes(file.size) + " · " + formatName(file.type);
+      $("detectedCard").style.display = "block";
+      
+      if (img.close) img.close();
+    } catch (err) {
+      $("error").textContent = "Error detecting image dimensions: " + err.message;
+    }
+  } else {
+    fileBufferPromise = null;
+    $("fileName").textContent = "No file selected.";
+  }
+});
+
+$("checkBtn").addEventListener("click", checkPhoto);
+$("fixBtn").addEventListener("click", fixPhoto);
+
+$("downloadBtn").addEventListener("click", () => {
+  if (!correctedBlob) return;
+  const url = URL.createObjectURL(correctedBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = correctedName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function getRequirements() {
+  return {
+    maxKB: Number($("maxKB").value) || null,
+    minKB: Number($("minKB").value) || null,
+    width: Number($("width").value) || null,
+    height: Number($("height").value) || null,
+    format: $("format").value,
+    mode: $("resizeMode").value
+  };
+}
+
+function formatName(type) {
+  if (type === "image/jpeg" || type === "image/jpg") return "JPG";
+  if (type === "image/png") return "PNG";
+  if (type === "image/webp") return "WebP";
+  return type || "Unknown";
+}
+
+async function getImageElement() {
+  if (!fileBufferPromise) throw new Error("Please select a photo first.");
+  
+  const buffer = await fileBufferPromise;
+  const blob = new Blob([buffer], { type: selectedFile.type });
+
+  if ('createImageBitmap' in window) {
+    try {
+      return await createImageBitmap(blob);
+    } catch (e) {}
+  }
+
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Could not decode image pixels."));
+    };
+    img.src = url;
+  });
+}
+
+function createLightweightThumbnail(imgSource) {
+  const w = imgSource.width || imgSource.naturalWidth;
+  const h = imgSource.height || imgSource.naturalHeight;
+  const scale = Math.min(1, 400 / w);
+  
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(w * scale);
+  canvas.height = Math.round(h * scale);
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(imgSource, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", 0.75);
+}
+
+async function checkPhoto() {
+  $("error").textContent = "";
+
+  if (!selectedFile) {
+    $("error").textContent = "Please choose a photo first.";
+    return;
+  }
+
+  try {
+    const req = getRequirements();
+    const img = await getImageElement();
+    
+    const imgWidth = img.width || img.naturalWidth;
+    const imgHeight = img.height || img.naturalHeight;
+    const sizeKB = selectedFile.size / 1024;
+
+    thumbnailDataURL = createLightweightThumbnail(img);
+
+    const sizeOK =
+      (!req.maxKB || sizeKB <= req.maxKB) &&
+      (!req.minKB || sizeKB >= req.minKB);
+
+    const dimensionsOK =
+      (!req.width || imgWidth === req.width) &&
+      (!req.height || imgHeight === req.height);
+
+    const formatOK = selectedFile.type === req.format || 
+                     (selectedFile.type === "image/jpg" && req.format === "image/jpeg");
+
+    let ratioText = (imgWidth / imgHeight).toFixed(2) + " : 1";
+    if (req.width && req.height) {
+      ratioText += " (Target: " + (req.width / req.height).toFixed(2) + " : 1)";
+    }
+
+    const checks = [
+      { title: "File Size", detail: buildSizeDetail(sizeKB, req), ok: sizeOK },
+      { title: "Dimensions", detail: buildDimensionDetail(imgWidth, imgHeight, req), ok: dimensionsOK },
+      { title: "Aspect Ratio", detail: ratioText, ok: dimensionsOK },
+      { title: "Format", detail: formatName(selectedFile.type) + " · required " + formatName(req.format), ok: formatOK }
+    ];
+
+    if (img.close) img.close();
+    renderReport(checks);
+
+  } catch (err) {
+    $("error").textContent = err.message || "Could not read the image.";
+  }
+}
+
+function buildSizeDetail(sizeKB, req) {
+  let text = sizeKB.toFixed(1) + " KB";
+  if (req.minKB && req.maxKB) text += " · required " + req.minKB + "–" + req.maxKB + " KB";
+  else if (req.maxKB) text += " · required ≤ " + req.maxKB + " KB";
+  else if (req.minKB) text += " · required ≥ " + req.minKB + " KB";
+  return text;
+}
+
+function buildDimensionDetail(width, height, req) {
+  let text = width + " × " + height + " px";
+  if (req.width && req.height) text += " · required " + req.width + " × " + req.height + " px";
+  else if (req.width) text += " · required width " + req.width + " px";
+  else if (req.height) text += " · required height " + req.height + " px";
+  return text;
+}
+
+function renderReport(checks) {
+  $("report").style.display = "block";
+  $("preview").src = thumbnailDataURL || "";
+  $("checks").innerHTML = "";
+
+  checks.forEach(c => {
+    const row = document.createElement("div");
+    row.className = "check";
+
+    const left = document.createElement("div");
+    const title = document.createElement("div");
+    title.className = "title";
+    title.textContent = c.title;
+
+    const detail = document.createElement("div");
+    detail.className = "detail";
+    detail.textContent = c.detail;
+
+    left.appendChild(title);
+    left.appendChild(detail);
+
+    const badge = document.createElement("span");
+    badge.className = "badge " + (c.ok ? "ok" : "bad");
+    badge.textContent = c.ok ? "PASS" : "FAIL";
+
+    row.appendChild(left);
+    row.appendChild(badge);
+    $("checks").appendChild(row);
+  });
+
+  const allOK = checks.every(c => c.ok);
+
+  $("summary").className = "summary " + (allOK ? "pass" : "fail");
+  $("summary").textContent = allOK
+    ? "✓ Your photo meets all specified requirements."
+    : "⚠ Your photo does not match the required specs.";
+
+  $("fixArea").style.display = allOK ? "none" : "block";
+  $("downloadArea").style.display = "none";
+  correctedBlob = null;
+
+  $("report").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// Features 3 & 4: Smarter Resizing & Adaptive Compression Engine
+async function fixPhoto() {
+  if (!selectedFile) return;
+
+  $("fixBtn").disabled = true;
+  $("fixStatus").textContent = "Processing and optimizing image locally…";
+  $("downloadArea").style.display = "none";
+
+  let img = null;
+  try {
+    const req = getRequirements();
+    img = await getImageElement();
+
+    const srcW = img.width || img.naturalWidth;
+    const srcH = img.height || img.naturalHeight;
+
+    let targetW = req.width || srcW;
+    let targetH = req.height || srcH;
+
+    // Feature 3: Smart Resizing Calculations
+    if (req.mode === "maintain" && req.width && req.height) {
+      const scale = Math.min(req.width / srcW, req.height / srcH);
+      targetW = Math.round(srcW * scale);
+      targetH = Math.round(srcH * scale);
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext("2d");
+
+    const mime = req.format || "image/jpeg";
+    if (mime === "image/jpeg") {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, targetW, targetH);
+    }
+
+    if (req.mode === "crop" && req.width && req.height) {
+      // Center Cover Crop Logic
+      const scale = Math.max(targetW / srcW, targetH / srcH);
+      const renderW = srcW * scale;
+      const renderH = srcH * scale;
+      const offsetX = (targetW - renderW) / 2;
+      const offsetY = (targetH - renderH) / 2;
+      ctx.drawImage(img, offsetX, offsetY, renderW, renderH);
+    } else {
+      // Stretch or Maintained draw
+      ctx.drawImage(img, 0, 0, targetW, targetH);
+    }
+
+    // Feature 4: Intelligent Quality Targeting via Binary Search
+    if (mime === "image/png" && req.maxKB) {
+      correctedBlob = await canvasToBlob(canvas, mime, 1);
+      if (correctedBlob.size / 1024 > req.maxKB) {
+        throw new Error("PNG format cannot meet the target KB size. Please select JPG or WebP for compression.");
+      }
+    } else if (req.maxKB && (mime === "image/jpeg" || mime === "image/webp")) {
+      correctedBlob = await findBestBlob(canvas, mime, req.maxKB);
+    } else {
+      correctedBlob = await canvasToBlob(canvas, mime, 0.92);
+    }
+
+    correctedName = "fileready-corrected." + (mime === "image/jpeg" ? "jpg" : mime === "image/webp" ? "webp" : "png");
+
+    $("fixStatus").textContent =
+      "Optimized Size: " + formatBytes(correctedBlob.size) +
+      " · " + targetW + " × " + targetH + " px · " + formatName(mime);
+
+    $("downloadArea").style.display = "block";
+
+  } catch (err) {
+    $("fixStatus").textContent = "Could not fix the photo: " + (err.message || "Unknown error.");
+  } finally {
+    if (img && img.close) img.close();
+    $("fixBtn").disabled = false;
+  }
+}
+
+function canvasToBlob(canvas, mime, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (blob) resolve(blob);
+      else reject(new Error("Browser canvas compression failed."));
+    }, mime, quality);
+  });
+}
+
+// Binary Search for Compression Target
+async function findBestBlob(canvas, mime, maxKB) {
+  const maxBytes = maxKB * 1024;
+  let low = 0.05;
+  let high = 0.98;
+  let best = null;
+
+  for (let i = 0; i < 14; i++) {
+    const quality = (low + high) / 2;
+    const blob = await canvasToBlob(canvas, mime, quality);
+
+    if (blob.size <= maxBytes) {
+      best = blob;
+      low = quality;
+    } else {
+      high = quality;
+    }
+  }
+
+  if (!best) {
+    best = await canvasToBlob(canvas, mime, 0.05);
+  }
+
+  return best;
+}
+</script>
+</body>
+</html>
