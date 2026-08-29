@@ -1,612 +1,774 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>REKISTIO Photo Checker — Check &amp; Resize Photos Online</title>
-<meta name="description" content="Check photo dimensions, file size and format requirements, then resize and compress your photo directly in your browser.">
-<meta name="robots" content="index,follow">
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#f5f7fb;color:#172033;font-family:system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif}
-header{background:#fff;border-bottom:1px solid #e5e7eb;padding:18px}
-.wrap{max-width:960px;margin:auto}
-.brand{font-size:22px;font-weight:800;letter-spacing:-.3px}
-.tag{font-size:13px;color:#667085;margin-top:3px}
-main{padding:28px 14px}
-.hero h1{font-size:32px;margin:0 0 8px}
-.hero p{color:#667085;line-height:1.5;margin:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
-.card{background:#fff;border:1px solid #e4e7ec;border-radius:16px;padding:20px}
-.full{grid-column:1/-1}
-h2{font-size:18px;margin:0 0 16px}
-label{font-size:13px;font-weight:700;display:block;margin-bottom:6px;color:#344054}
-input,select,button{width:100%;min-height:42px;border-radius:10px;font:inherit}
-input,select{border:1px solid #d0d5dd;padding:9px 12px;background:#fff;color:#172033}
-input:focus,select:focus{border-color:#172033;outline:none}
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.field{margin-bottom:14px}
-.drop{border:2px dashed #cbd5e1;border-radius:14px;padding:26px;text-align:center;cursor:pointer;background:#fafbfc;transition:background .2s}
-.drop:hover{background:#f0f4fe}
-.drop strong{display:block;margin-bottom:4px;color:#172033}
-.drop span{font-size:13px;color:#667085}
-#fileInput{display:none}
-button{border:0;background:#172033;color:#fff;font-weight:700;padding:10px 15px;cursor:pointer;border-radius:10px}
-button:hover{background:#2a364f}
-button:disabled{opacity:.5;cursor:not-allowed}
-.preset-bar{background:#f8fafc;border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin-bottom:16px}
-.detected-card{margin-top:14px;background:#f0f7ff;border:1px solid #bbe3fe;border-radius:12px;padding:12px 14px;display:none}
-.detected-title{font-size:12px;font-weight:800;color:#026aa7;text-transform:uppercase;letter-spacing:.5px}
-.detected-info{font-size:14px;font-weight:700;color:#094067;margin-top:4px}
-.report{display:none}
-.summary{padding:14px;border-radius:12px;margin-bottom:14px;font-weight:800}
-.pass{background:#ecfdf3;color:#067647;border:1px solid #abefc6}
-.fail{background:#fef3f2;color:#b42318;border:1px solid #fecdca}
-.check{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eef0f3}
-.title{font-weight:700}
-.detail,.note{font-size:13px;color:#667085;margin-top:3px}
-.badge{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800}
-.ok{background:#ecfdf3;color:#067647}
-.bad{background:#fef3f2;color:#b42318}
-.preview{display:block;max-width:220px;max-height:260px;margin:12px auto 18px;border:1px solid #e4e7ec;border-radius:10px;object-fit:contain}
-.error{color:#b42318;font-size:13px;margin-top:10px;font-weight:600}
-.download{margin-top:18px}
-.privacy-note{margin-top:14px;padding:11px 13px;border-radius:10px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:13px;line-height:1.45}
-.requirement-note{margin-top:12px;padding:10px 12px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:12px;line-height:1.45}
-.secondary-btn{margin-top:10px;background:#fff;color:#172033;border:1px solid #d0d5dd}
-.secondary-btn:hover{background:#f8fafc}
-.status-ok{color:#067647;font-weight:700}
-.status-warning{color:#b54708;font-weight:700}
-footer{font-size:12px;color:#667085;text-align:center;padding:24px;border-top:1px solid #e5e7eb;margin-top:40px;background:#fff}
-@media(max-width:700px){
-  .grid{grid-template-columns:1fr}
-  .full{grid-column:auto}
-  .fields{grid-template-columns:1fr}
-  .hero h1{font-size:28px}
-  .card{padding:16px}
-  .preview{max-width:100%;height:auto}
-  .check{gap:12px;align-items:flex-start}
-  .badge{flex-shrink:0}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REKISTIO — Simple Tools for Everyday Digital Tasks</title>
+  <meta name="description" content="REKISTIO provides simple, fast and privacy-first tools for everyday digital tasks.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="REKISTIO — Simple Tools for Everyday Digital Tasks">
+  <meta property="og:description" content="Simple, useful and privacy-first tools for everyday digital tasks.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#111827">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f8fafc;
+      --surface-2: #f1f5f9;
+      --text: #111827;
+      --muted: #667085;
+      --border: #e2e8f0;
+      --accent: #111827;
+      --accent-hover: #1f2937;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      --success-text: #166534;
+      --radius: 18px;
+      --max-width: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(100% - 32px, var(--max-width));
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 15px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #ffffff !important;
+      font-weight: 600;
+    }
+
+    .nav-button:hover {
+      background: var(--accent-hover) !important;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 92px 0 74px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      max-width: 850px;
+      margin: 0 auto;
+      font-size: clamp(40px, 7vw, 68px);
+      line-height: 1.04;
+      letter-spacing: -2.8px;
+      font-weight: 800;
+    }
+
+    .hero p {
+      max-width: 670px;
+      margin: 25px auto 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      margin-top: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .primary-button,
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 11px;
+      font-size: 15px;
+      font-weight: 700;
+      transition: 0.18s ease;
+    }
+
+    .primary-button {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .primary-button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .secondary-button {
+      border: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    .secondary-button:hover {
+      background: var(--surface);
+    }
+
+    /* PRIVACY STRIP */
+    .privacy-strip {
+      max-width: 780px;
+      margin: 0 auto 72px;
+      padding: 15px 18px;
+      border-radius: 13px;
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success-text);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 76px 0;
+    }
+
+    .section-header {
+      max-width: 700px;
+      margin-bottom: 32px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 40px);
+      line-height: 1.15;
+      letter-spacing: -1.2px;
+    }
+
+    .section-header p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    /* FEATURED TOOL */
+    .featured {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tool-card {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 32px;
+      padding: 34px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.05);
+    }
+
+    .tool-icon {
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: var(--surface-2);
+      font-size: 25px;
+      margin-bottom: 20px;
+    }
+
+    .tool-card h3 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.7px;
+    }
+
+    .tool-card .description {
+      margin: 12px 0 22px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .tool-features {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 26px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tool-features li {
+      position: relative;
+      padding-left: 25px;
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .tool-features li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      font-weight: 800;
+    }
+
+    .tool-preview {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 270px;
+      padding: 28px;
+      border-radius: 15px;
+      background: var(--surface);
+      border: 1px dashed #cbd5e1;
+    }
+
+    .preview-window {
+      width: 100%;
+      max-width: 290px;
+      padding: 20px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .preview-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .preview-photo {
+      height: 105px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--surface-2);
+      font-size: 42px;
+      margin-bottom: 14px;
+    }
+
+    .preview-line {
+      height: 9px;
+      margin-bottom: 8px;
+      border-radius: 99px;
+      background: var(--surface-2);
+    }
+
+    .preview-line.short {
+      width: 62%;
+    }
+
+    .preview-result {
+      margin-top: 15px;
+      padding: 9px;
+      text-align: center;
+      border-radius: 8px;
+      background: var(--success-bg);
+      color: var(--success-text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* WHY REKISTIO */
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .benefit {
+      padding: 25px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: #ffffff;
+    }
+
+    .benefit-icon {
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
+    .benefit h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .benefit p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* UPCOMING TOOLS */
+    .upcoming {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .coming-card {
+      min-height: 175px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: #ffffff;
+    }
+
+    .coming-card .icon {
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
+    .coming-card h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .coming-card p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .coming-label {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    /* ABOUT PREVIEW */
+    .about-box {
+      max-width: 800px;
+      padding: 30px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #ffffff;
+    }
+
+    .about-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .about-link {
+      display: inline-flex;
+      margin-top: 20px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .about-link:hover {
+      text-decoration: underline;
+    }
+
+    /* CTA */
+    .cta {
+      padding: 84px 0;
+      background: #111827;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .cta h2 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 44px);
+      letter-spacing: -1.3px;
+      line-height: 1.15;
+    }
+
+    .cta p {
+      max-width: 600px;
+      margin: 14px auto 26px;
+      color: #cbd5e1;
+    }
+
+    .cta .primary-button {
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .cta .primary-button:hover {
+      background: #f1f5f9;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    .footer-inner {
+      min-height: 115px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .footer-copy {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      color: #667085;
+      font-size: 13px;
+    }
+
+    .footer-links a {
+      margin: 0 6px;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
+
+    .footer-dot {
+      color: #98a2b3;
+    }
+
+    /* MOBILE */
+    @media (max-width: 800px) {
+      .nav-links a:not(.nav-button) {
+        display: none;
+      }
+      .hero {
+        padding: 70px 0 58px;
+      }
+      .hero h1 {
+        letter-spacing: -1.8px;
+      }
+      .hero p {
+        font-size: 16px;
+      }
+      section {
+        padding: 60px 0;
+      }
+      .tool-card {
+        grid-template-columns: 1fr;
+        padding: 23px;
+      }
+      .tool-preview {
+        min-height: 220px;
+      }
+      .benefits,
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-inner {
+        padding: 25px 0;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: min(100% - 24px, var(--max-width));
+      }
+      .hero h1 {
+        font-size: 39px;
+      }
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+      .primary-button,
+      .secondary-button {
+        width: 100%;
+      }
+      .privacy-strip {
+        font-size: 13px;
+      }
+      .tool-card {
+        padding: 20px;
+      }
+      .tool-card h3 {
+        font-size: 25px;
+      }
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <div class="brand">REKISTIO</div>
-    <div class="tag">Photo Checker &amp; Smart Resizer</div>
-  </div>
-</header>
-
-<main class="wrap">
-<section class="hero">
-  <h1>Photo Checker &amp; Resizer</h1>
-  <p>Check your photo against required dimensions, file size and format — then fix it instantly in your browser.</p>
-  <div class="privacy-note">
-    🔒 <strong>Privacy-first:</strong> Your photo is processed locally in your browser. It is not intentionally uploaded to our server.
-  </div>
-</section>
-
-<div class="grid">
-<!-- 1. Upload & Immediate Auto-Detection -->
-<section class="card">
-<h2>1. Upload photo</h2>
-<label class="drop" for="fileInput">
-<strong>Choose an image</strong>
-<span>JPG, PNG or WebP</span>
-</label>
-<input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp">
-
-<div id="detectedCard" class="detected-card">
-  <div class="detected-title">Original File Detected</div>
-  <div id="detectedInfo" class="detected-info">—</div>
-</div>
-
-<div id="fileName" class="note" style="margin-top:10px">No file selected.</div>
-<div id="error" class="error"></div>
-</section>
-
-<!-- 2. Requirements & Presets -->
-<section class="card">
-<h2>2. Select Preset or Set Specs</h2>
-
-<div class="preset-bar">
-  <label for="presetSelect">Preset Requirements</label>
-  <select id="presetSelect">
-    <option value="custom">Custom Specs</option>
-    <option value="passport">Passport Photo (600×600 px, max 200 KB, JPG)</option>
-    <option value="visa">Visa Photo (2×2 inch / 600×600 px, max 300 KB, JPG)</option>
-    <option value="exam">Exam Application (200×230 px, 20–50 KB, JPG)</option>
-    <option value="gov">Gov Form Photo (350×450 px, max 100 KB, JPG)</option>
-    <option value="signature">Signature Upload (300×80 px, 10–20 KB, JPG)</option>
-  </select>
-</div>
-
-<div class="requirement-note">
-  <strong>Important:</strong> Requirements can vary by application, authority and country.
-  Always verify the exact specifications shown by the organization you're applying to.
-</div>
-
-<div class="fields" style="margin-top:14px">
-  <div class="field"><label for="width">Required Width (px)</label><input id="width" type="number" min="1" placeholder="e.g. 600"></div>
-  <div class="field"><label for="height">Required Height (px)</label><input id="height" type="number" min="1" placeholder="e.g. 600"></div>
-</div>
-
-<div class="field">
-  <label for="resizeMode">Resizing Mode</label>
-  <select id="resizeMode">
-    <option value="crop">Crop to Exact Dimensions (Center Cover)</option>
-    <option value="maintain">Maintain Aspect Ratio (Fit Inside Target Box)</option>
-    <option value="stretch">Exact Stretch (Force Width &amp; Height)</option>
-  </select>
-</div>
-
-<div class="fields">
-  <div class="field"><label for="maxKB">Maximum Size (KB)</label><input id="maxKB" type="number" min="1" placeholder="e.g. 200"></div>
-  <div class="field"><label for="minKB">Minimum Size (KB)</label><input id="minKB" type="number" min="0" placeholder="optional"></div>
-</div>
-
-<div class="field">
-  <label for="format">Required Format</label>
-  <select id="format">
-    <option value="image/jpeg">JPG / JPEG</option>
-    <option value="image/png">PNG</option>
-    <option value="image/webp">WebP</option>
-  </select>
-</div>
-
-<button id="checkBtn">Check Photo</button>
-</section>
-
-<!-- 3. Report & Smart Resizer -->
-<section id="report" class="card full">
-<h2>3. Photo Check Result</h2>
-<img id="preview" class="preview" alt="Photo preview">
-<div id="summary"></div>
-<div id="checks"></div>
-
-<div id="fixArea" class="download" style="display:none">
-<h2>Fix &amp; Optimize Photo</h2>
-<button id="fixBtn">Auto-Fix &amp; Compress Photo</button>
-<div id="fixStatus" class="note"></div>
-</div>
-
-<div id="downloadArea" class="download" style="display:none">
-<button id="downloadBtn">Download Corrected Photo</button>
-</div>
-
-<button id="resetBtn" class="secondary-btn" type="button">
-  Check Another Photo
-</button>
-</section>
-</div>
-</main>
-
-<footer>
-  <div class="wrap">
-    REKISTIO · Photo processing happens locally in your browser.
-    <br><br>
-    <a href="/about.html" style="color:#667085;margin:0 6px;text-decoration:none;">About</a> · 
-    <a href="/privacy.html" style="color:#667085;margin:0 6px;text-decoration:none;">Privacy Policy</a> · 
-    <a href="/terms.html" style="color:#667085;margin:0 6px;text-decoration:none;">Terms</a> · 
-    <a href="/contact.html" style="color:#667085;margin:0 6px;text-decoration:none;">Contact</a>
-  </div>
-</footer>
-
-<script>
-let selectedFile = null;
-let fileBufferPromise = null;
-let detectedDimensions = null;
-let thumbnailDataURL = null;
-let correctedBlob = null;
-let correctedName = "rekistio-corrected.jpg";
-
-const $ = id => document.getElementById(id);
-
-const PRESETS = {
-  custom: { width: "", height: "", minKB: "", maxKB: "", format: "image/jpeg", mode: "crop" },
-  passport: { width: 600, height: 600, minKB: "", maxKB: 200, format: "image/jpeg", mode: "crop" },
-  visa: { width: 600, height: 600, minKB: "", maxKB: 300, format: "image/jpeg", mode: "crop" },
-  exam: { width: 200, height: 230, minKB: 20, maxKB: 50, format: "image/jpeg", mode: "crop" },
-  gov: { width: 350, height: 450, minKB: "", maxKB: 100, format: "image/jpeg", mode: "crop" },
-  signature: { width: 300, height: 80, minKB: 10, maxKB: 20, format: "image/jpeg", mode: "maintain" }
-};
-
-$("presetSelect").addEventListener("change", e => {
-  const p = PRESETS[e.target.value];
-  if (!p) return;
-  $("width").value = p.width;
-  $("height").value = p.height;
-  $("minKB").value = p.minKB;
-  $("maxKB").value = p.maxKB;
-  $("format").value = p.format;
-  $("resizeMode").value = p.mode;
-});
-
-$("fileInput").addEventListener("change", async e => {
-  const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
-  selectedFile = file;
-  $("error").textContent = "";
-  $("report").style.display = "none";
-  $("detectedCard").style.display = "none";
-  $("fixArea").style.display = "none";
-  $("downloadArea").style.display = "none";
-  $("fixStatus").textContent = "";
-  correctedBlob = null;
-  thumbnailDataURL = null;
-  detectedDimensions = null;
-
-  if (file) {
-    $("fileName").textContent = file.name;
-    
-    fileBufferPromise = new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = ev => resolve(ev.target.result);
-      reader.onerror = () => reject(new Error("Permission to read file was denied by browser."));
-      reader.readAsArrayBuffer(file);
-    });
-
-    try {
-      const img = await getImageElement();
-      detectedDimensions = {
-        width: img.width || img.naturalWidth,
-        height: img.height || img.naturalHeight,
-        sizeKB: file.size / 1024,
-        type: file.type
-      };
-      
-      $("detectedInfo").textContent = 
-        detectedDimensions.width + " × " + detectedDimensions.height + " px · " +
-        formatBytes(file.size) + " · " + formatName(file.type);
-      $("detectedCard").style.display = "block";
-      
-      if (img.close) img.close();
-    } catch (err) {
-      $("error").textContent = "We couldn't read this image. Please try a valid JPG, PNG or WebP file.";
-    }
-  } else {
-    fileBufferPromise = null;
-    $("fileName").textContent = "No file selected.";
-  }
-});
-
-$("checkBtn").addEventListener("click", checkPhoto);
-$("fixBtn").addEventListener("click", fixPhoto);
-$("resetBtn").addEventListener("click", resetChecker);
-
-$("downloadBtn").addEventListener("click", () => {
-  if (!correctedBlob) return;
-  const url = URL.createObjectURL(correctedBlob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = correctedName;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-});
-
-function resetChecker() {
-  selectedFile = null;
-  fileBufferPromise = null;
-  detectedDimensions = null;
-  thumbnailDataURL = null;
-  correctedBlob = null;
-  correctedName = "rekistio-corrected.jpg";
-
-  $("fileInput").value = "";
-  $("fileName").textContent = "No file selected.";
-  $("error").textContent = "";
-  $("detectedCard").style.display = "none";
-  $("report").style.display = "none";
-  $("fixArea").style.display = "none";
-  $("downloadArea").style.display = "none";
-  $("fixStatus").textContent = "";
-  $("summary").textContent = "";
-  $("checks").innerHTML = "";
-  $("preview").src = "";
-
-  $("presetSelect").value = "custom";
-  $("width").value = "";
-  $("height").value = "";
-  $("minKB").value = "";
-  $("maxKB").value = "";
-  $("format").value = "image/jpeg";
-  $("resizeMode").value = "crop";
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function formatBytes(bytes) {
-  if (bytes < 1024) return bytes + " B";
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
-}
-
-function getRequirements() {
-  return {
-    maxKB: Number($("maxKB").value) || null,
-    minKB: Number($("minKB").value) || null,
-    width: Number($("width").value) || null,
-    height: Number($("height").value) || null,
-    format: $("format").value,
-    mode: $("resizeMode").value
-  };
-}
-
-function formatName(type) {
-  if (type === "image/jpeg" || type === "image/jpg") return "JPG";
-  if (type === "image/png") return "PNG";
-  if (type === "image/webp") return "WebP";
-  return type || "Unknown";
-}
-
-async function getImageElement() {
-  if (!fileBufferPromise) throw new Error("Please select a photo first.");
-  
-  const buffer = await fileBufferPromise;
-  const blob = new Blob([buffer], { type: selectedFile.type });
-
-  if ('createImageBitmap' in window) {
-    try {
-      return await createImageBitmap(blob);
-    } catch (e) {}
-  }
-
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve(img);
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error("Could not decode image pixels."));
-    };
-    img.src = url;
-  });
-}
-
-function createLightweightThumbnail(imgSource) {
-  const w = imgSource.width || imgSource.naturalWidth;
-  const h = imgSource.height || imgSource.naturalHeight;
-  const scale = Math.min(1, 400 / w);
-  
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(w * scale);
-  canvas.height = Math.round(h * scale);
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(imgSource, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL("image/jpeg", 0.75);
-}
-
-async function checkPhoto() {
-  $("error").textContent = "";
-
-  if (!selectedFile) {
-    $("error").textContent = "Please choose a photo first.";
-    return;
-  }
-
-  try {
-    const req = getRequirements();
-    const img = await getImageElement();
-    
-    const imgWidth = img.width || img.naturalWidth;
-    const imgHeight = img.height || img.naturalHeight;
-    const sizeKB = selectedFile.size / 1024;
-
-    thumbnailDataURL = createLightweightThumbnail(img);
-
-    const sizeOK =
-      (!req.maxKB || sizeKB <= req.maxKB) &&
-      (!req.minKB || sizeKB >= req.minKB);
-
-    const dimensionsOK =
-      (!req.width || imgWidth === req.width) &&
-      (!req.height || imgHeight === req.height);
-
-    const formatOK = selectedFile.type === req.format || 
-                     (selectedFile.type === "image/jpg" && req.format === "image/jpeg");
-
-    const actualRatio = imgWidth / imgHeight;
-    let ratioOK = true;
-    let ratioText = actualRatio.toFixed(2) + " : 1";
-
-    if (req.width && req.height) {
-      const targetRatio = req.width / req.height;
-      ratioOK = Math.abs(actualRatio - targetRatio) < 0.01;
-      ratioText += " · target " + targetRatio.toFixed(2) + " : 1";
-    }
-
-    const checks = [
-      { title: "File Size", detail: buildSizeDetail(sizeKB, req), ok: sizeOK },
-      { title: "Dimensions", detail: buildDimensionDetail(imgWidth, imgHeight, req), ok: dimensionsOK },
-      { title: "Aspect Ratio", detail: ratioText, ok: ratioOK },
-      { title: "Format", detail: formatName(selectedFile.type) + " · required " + formatName(req.format), ok: formatOK }
-    ];
-
-    if (img.close) img.close();
-    renderReport(checks);
-
-  } catch (err) {
-    $("error").textContent = "We couldn't read this image. Please try a valid JPG, PNG or WebP file.";
-  }
-}
-
-function buildSizeDetail(sizeKB, req) {
-  let text = sizeKB.toFixed(1) + " KB";
-  if (req.minKB && req.maxKB) text += " · required " + req.minKB + "–" + req.maxKB + " KB";
-  else if (req.maxKB) text += " · required ≤ " + req.maxKB + " KB";
-  else if (req.minKB) text += " · required ≥ " + req.minKB + " KB";
-  return text;
-}
-
-function buildDimensionDetail(width, height, req) {
-  let text = width + " × " + height + " px";
-  if (req.width && req.height) text += " · required " + req.width + " × " + req.height + " px";
-  else if (req.width) text += " · required width " + req.width + " px";
-  else if (req.height) text += " · required height " + req.height + " px";
-  return text;
-}
-
-function renderReport(checks) {
-  $("report").style.display = "block";
-  $("preview").src = thumbnailDataURL || "";
-  $("checks").innerHTML = "";
-
-  checks.forEach(c => {
-    const row = document.createElement("div");
-    row.className = "check";
-
-    const left = document.createElement("div");
-    const title = document.createElement("div");
-    title.className = "title";
-    title.textContent = c.title;
-
-    const detail = document.createElement("div");
-    detail.className = "detail";
-    detail.textContent = c.detail;
-
-    left.appendChild(title);
-    left.appendChild(detail);
-
-    const badge = document.createElement("span");
-    badge.className = "badge " + (c.ok ? "ok" : "bad");
-    badge.textContent = c.ok ? "PASS" : "FAIL";
-
-    row.appendChild(left);
-    row.appendChild(badge);
-    $("checks").appendChild(row);
-  });
-
-  const allOK = checks.every(c => c.ok);
-
-  $("summary").className = "summary " + (allOK ? "pass" : "fail");
-  $("summary").textContent = allOK
-    ? "✓ Your photo meets all specified requirements."
-    : "⚠ Your photo does not match the required specs.";
-
-  $("fixArea").style.display = allOK ? "none" : "block";
-  $("downloadArea").style.display = "none";
-  correctedBlob = null;
-
-  $("report").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-async function fixPhoto() {
-  if (!selectedFile) return;
-
-  $("fixBtn").disabled = true;
-  $("fixStatus").textContent = "Processing and optimizing image locally…";
-  $("downloadArea").style.display = "none";
-
-  let img = null;
-  try {
-    const req = getRequirements();
-    img = await getImageElement();
-
-    const srcW = img.width || img.naturalWidth;
-    const srcH = img.height || img.naturalHeight;
-
-    let targetW = req.width || srcW;
-    let targetH = req.height || srcH;
-
-    if (req.mode === "maintain" && req.width && req.height) {
-      const scale = Math.min(req.width / srcW, req.height / srcH);
-      targetW = Math.round(srcW * scale);
-      targetH = Math.round(srcH * scale);
-    }
-
-    const canvas = document.createElement("canvas");
-    canvas.width = targetW;
-    canvas.height = targetH;
-    const ctx = canvas.getContext("2d");
-
-    const mime = req.format || "image/jpeg";
-    if (mime === "image/jpeg") {
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, targetW, targetH);
-    }
-
-    if (req.mode === "crop" && req.width && req.height) {
-      const scale = Math.max(targetW / srcW, targetH / srcH);
-      const renderW = srcW * scale;
-      const renderH = srcH * scale;
-      const offsetX = (targetW - renderW) / 2;
-      const offsetY = (targetH - renderH) / 2;
-      ctx.drawImage(img, offsetX, offsetY, renderW, renderH);
-    } else {
-      ctx.drawImage(img, 0, 0, targetW, targetH);
-    }
-
-    if (mime === "image/png" && req.maxKB) {
-      correctedBlob = await canvasToBlob(canvas, mime, 1);
-      if (correctedBlob.size / 1024 > req.maxKB) {
-        throw new Error("PNG format cannot meet the target KB size. Please select JPG or WebP for compression.");
-      }
-    } else if (req.maxKB && (mime === "image/jpeg" || mime === "image/webp")) {
-      correctedBlob = await findBestBlob(canvas, mime, req.maxKB);
-    } else {
-      correctedBlob = await canvasToBlob(canvas, mime, 0.92);
-    }
-
-    correctedName = "rekistio-corrected." + (
-      mime === "image/jpeg"
-        ? "jpg"
-        : mime === "image/webp"
-          ? "webp"
-          : "png"
-    );
-
-    $("fixStatus").textContent =
-      "Optimized Size: " + formatBytes(correctedBlob.size) +
-      " · " + targetW + " × " + targetH + " px · " + formatName(mime);
-
-    $("downloadArea").style.display = "block";
-
-  } catch (err) {
-    $("fixStatus").textContent = "Could not fix the photo: " + (err.message || "Unknown error.");
-  } finally {
-    if (img && img.close) img.close();
-    $("fixBtn").disabled = false;
-  }
-}
-
-function canvasToBlob(canvas, mime, quality) {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(blob => {
-      if (blob) resolve(blob);
-      else reject(new Error("Browser canvas compression failed."));
-    }, mime, quality);
-  });
-}
-
-async function findBestBlob(canvas, mime, maxKB) {
-  const maxBytes = maxKB * 1024;
-  let low = 0.05;
-  let high = 0.98;
-  let best = null;
-
-  for (let i = 0; i < 14; i++) {
-    const quality = (low + high) / 2;
-    const blob = await canvasToBlob(canvas, mime, quality);
-
-    if (blob.size <= maxBytes) {
-      best = blob;
-      low = quality;
-    } else {
-      high = quality;
-    }
-  }
-
-  if (!best) {
-    best = await canvasToBlob(canvas, mime, 0.05);
-  }
-
-  return best;
-}
-</script>
+  <!-- HEADER -->
+  <header>
+    <div class="container nav">
+      <a href="/" class="brand" aria-label="REKISTIO Home">
+        <img src="/logo.svg" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+        <span>REKISTIO</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#tools">Tools</a>
+        <a href="#why">Why REKISTIO?</a>
+        <a href="/about.html">About</a>
+        <a href="/photo-checker/" class="nav-button">Photo Checker</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow">✦ Simple. Useful. Privacy-first.</div>
+        <h1>Useful tools for everyday digital tasks.</h1>
+        <p>REKISTIO is a growing collection of simple digital tools designed to help you solve common problems quickly, clearly and without unnecessary complexity.</p>
+        <div class="hero-actions">
+          <a href="/photo-checker/" class="primary-button">Try Photo Checker →</a>
+          <a href="#tools" class="secondary-button">Explore Tools</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRIVACY -->
+    <div class="container">
+      <div class="privacy-strip">
+        🔒 <strong>Privacy-first:</strong> We design our tools to process your files locally whenever possible.
+      </div>
+    </div>
+
+    <!-- FEATURED TOOL -->
+    <section class="featured" id="tools">
+      <div class="container">
+        <div class="section-header">
+          <h2>Start with our first tool.</h2>
+          <p>A practical tool for one of the most common digital tasks: getting a photo to meet specific requirements.</p>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tool-icon">📷</div>
+            <h3>Photo Checker &amp; Resizer</h3>
+            <p class="description">Check your photo's dimensions, file size and format against your required specifications — then resize and compress it when needed.</p>
+            <ul class="tool-features">
+              <li>Check dimensions and aspect ratio</li>
+              <li>Check file size and format</li>
+              <li>Automatically resize and compress</li>
+              <li>Process photos directly in your browser</li>
+            </ul>
+            <a href="/photo-checker/" class="primary-button">Open Photo Checker →</a>
+          </div>
+          <div class="tool-preview" aria-hidden="true">
+            <div class="preview-window">
+              <div class="preview-top">
+                <span>Photo Check</span>
+                <span>✓</span>
+              </div>
+              <div class="preview-photo">📷</div>
+              <div class="preview-line"></div>
+              <div class="preview-line short"></div>
+              <div class="preview-result">✓ Photo meets requirements</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY REKISTIO -->
+    <section id="why">
+      <div class="container">
+        <div class="section-header">
+          <h2>Why REKISTIO?</h2>
+          <p>We want useful tools to feel simple, transparent and accessible.</p>
+        </div>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit-icon">🔒</div>
+            <h3>Privacy-first</h3>
+            <p>Whenever practical, processing happens directly in your browser instead of requiring your files to be uploaded to a server.</p>
+          </div>
+          <div class="benefit">
+            <div class="benefit-icon">⚡</div>
+            <h3>Fast &amp; simple</h3>
+            <p>No unnecessary steps. Open a tool, solve the problem and move on.</p>
+          </div>
+          <div class="benefit">
+            <div class="benefit-icon">🆓</div>
+            <h3>Accessible</h3>
+            <p>Our goal is to make genuinely useful digital utilities available without unnecessary barriers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPCOMING TOOLS -->
+    <section class="upcoming">
+      <div class="container">
+        <div class="section-header">
+          <h2>More useful tools, coming soon.</h2>
+          <p>REKISTIO will grow carefully. We'd rather build a few genuinely useful tools than a collection of unnecessary ones.</p>
+        </div>
+        <div class="tools-grid">
+          <div class="coming-card">
+            <div class="icon">📄</div>
+            <h3>Document Tools</h3>
+            <p>Simple utilities for common document tasks.</p>
+            <span class="coming-label">Coming soon</span>
+          </div>
+          <div class="coming-card">
+            <div class="icon">🔢</div>
+            <h3>Everyday Calculators</h3>
+            <p>Practical calculators for everyday situations.</p>
+            <span class="coming-label">Coming soon</span>
+          </div>
+          <div class="coming-card">
+            <div class="icon">🛠️</div>
+            <h3>More Utilities</h3>
+            <p>Useful little tools that save time and effort.</p>
+            <span class="coming-label">Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section>
+      <div class="container">
+        <div class="section-header">
+          <h2>Built around usefulness.</h2>
+        </div>
+        <div class="about-box">
+          <p>REKISTIO is being built with a simple idea: digital tools should solve the problem first, without making users navigate unnecessary complexity.</p>
+          <a href="/about.html" class="about-link">Learn more about REKISTIO →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+      <div class="container">
+        <h2>Have a photo that needs fixing?</h2>
+        <p>Check its requirements and create a corrected version in a few clicks.</p>
+        <a href="/photo-checker/" class="primary-button">Try Photo Checker →</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <div class="footer-brand">REKISTIO</div>
+        <div class="footer-copy">Simple tools for everyday digital tasks.</div>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="/about.html">About</a>
+        <span class="footer-dot">·</span>
+        <a href="/privacy.html">Privacy Policy</a>
+        <span class="footer-dot">·</span>
+        <a href="/terms.html">Terms</a>
+        <span class="footer-dot">·</span>
+        <a href="/contact.html">Contact</a>
+      </nav>
+    </div>
+  </footer>
 </body>
 </html>
