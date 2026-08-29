@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://r.rekistio-b33.workers.dev/sitemap.xml
